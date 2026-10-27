@@ -2,17 +2,19 @@ package io.github.nikromaniuk.greed_dungeon.hero_memento;
 
 import io.github.nikromaniuk.greed_dungeon.hero.Hero;
 import io.github.nikromaniuk.greed_dungeon.memento.Memento;
+import lombok.Getter;
 
+@Getter
 public class HeroMemento
 {
-    // --- FIELDS ---
+    // --- Fields ---
 
     private int id;
     private Hero hero;
     private Memento memento;
     private int level;
 
-    // --- CONSTRUCTORS ---
+    // --- Constructors ---
 
     public HeroMemento(int id, Hero hero, Memento memento, int level)
     {

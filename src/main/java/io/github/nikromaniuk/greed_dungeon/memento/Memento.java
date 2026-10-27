@@ -1,13 +1,16 @@
 package io.github.nikromaniuk.greed_dungeon.memento;
 
+import lombok.Getter;
+
+@Getter
 public class Memento
 {
-    // --- FIELDS ---
+    // --- Fields ---
 
     private int id;
     private String name;
 
-    // --- CONSTRUCTORS ---
+    // --- Constructors ---
 
     public Memento(int id, String name)
     {

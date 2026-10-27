@@ -1,5 +1,7 @@
 package io.github.nikromaniuk.greed_dungeon.memento;
 
+import io.github.nikromaniuk.greed_dungeon.memento.dto.*;
+import io.github.nikromaniuk.greed_dungeon.memento.mappers.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,32 +10,43 @@ import java.util.List;
 public class MementoService
 {
     private final MementoRepository mementoRepository;
+    private final MementoWebMapper mementoWebMapper;
+    private final MementoPersistenceMapper mementoPersistenceMapper;
 
-    public MementoService(MementoRepository mementoRepository)
+    public MementoService(
+            MementoRepository mementoRepository,
+            MementoWebMapper mementoWebMapper,
+            MementoPersistenceMapper mementoPersistenceMapper)
     {
         this.mementoRepository = mementoRepository;
+        this.mementoWebMapper = mementoWebMapper;
+        this.mementoPersistenceMapper = mementoPersistenceMapper;
     }
 
-    public List<MementoEntity> getAllMementos()
+    public List<MementoResponseDto> getAllMementos()
     {
-        return mementoRepository.findAll();
+        List<MementoEntity> entities = mementoRepository.findAll();
+
+        List<Memento> domains = entities.stream()
+                .map(mementoPersistenceMapper::toDomain)
+                .toList();
+
+        return domains.stream()
+                .map(mementoWebMapper::toResponse)
+                .toList();
     }
 
-    public void createMemento(CreateMementoDto request)
+    public void createMemento(MementoCreateDto dto)
     {
-        if (request == null) { return; }
+        if (dto == null) { return; }
 
-        // --- Create Empty Object ---
+        // DTO -> Domain
+        Memento domain = mementoWebMapper.toDomain(dto);
 
-        MementoEntity tempMemento = new MementoEntity();
-        MementoEntity savedMemento = mementoRepository.save(tempMemento); // Save & store new hero into the DB
+        // Domain -> Entity
+        MementoEntity entity = mementoPersistenceMapper.toEntity(domain);
 
-        // --- Add Details To Object---
-
-        savedMemento.setName(request.name());
-
-        // --- Save Detailed Object ---
-
-        mementoRepository.save(savedMemento);
+        // Save Entity
+        mementoRepository.save(entity);
     }
 }

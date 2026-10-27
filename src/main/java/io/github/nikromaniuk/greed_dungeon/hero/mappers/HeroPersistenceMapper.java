@@ -1,8 +1,7 @@
 package io.github.nikromaniuk.greed_dungeon.hero.mappers;
 
 import io.github.nikromaniuk.greed_dungeon.floor.mappers.FloorPersistenceMapper;
-import io.github.nikromaniuk.greed_dungeon.hero.Hero;
-import io.github.nikromaniuk.greed_dungeon.hero.HeroEntity;
+import io.github.nikromaniuk.greed_dungeon.hero.*;
 import io.github.nikromaniuk.greed_dungeon.hero_memento.mappers.HeroMementoPersistenceMapper;
 import org.mapstruct.Mapper;
 

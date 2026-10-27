@@ -1,5 +1,6 @@
 package io.github.nikromaniuk.greed_dungeon.memento;
 
+import io.github.nikromaniuk.greed_dungeon.memento.dto.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -16,13 +17,13 @@ public class MementoController
     }
 
     @GetMapping
-    public List<MementoEntity> getAllMementos()
+    public List<MementoResponseDto> getAllMementos()
     {
         return service.getAllMementos();
     }
 
     @PostMapping
-    public void createMemento(@RequestBody CreateMementoDto request)
+    public void createMemento(@RequestBody MementoCreateDto request)
     {
         service.createMemento(request);
     }

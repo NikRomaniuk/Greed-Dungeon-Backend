@@ -1,7 +1,6 @@
 package io.github.nikromaniuk.greed_dungeon.memento.mappers;
 
-import io.github.nikromaniuk.greed_dungeon.memento.Memento;
-import io.github.nikromaniuk.greed_dungeon.memento.MementoEntity;
+import io.github.nikromaniuk.greed_dungeon.memento.*;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

@@ -1,14 +1,25 @@
 package io.github.nikromaniuk.greed_dungeon.hero;
 
+import io.github.nikromaniuk.greed_dungeon.floor.Floor;
 import io.github.nikromaniuk.greed_dungeon.floor.FloorEntity;
 import io.github.nikromaniuk.greed_dungeon.floor.FloorRepository;
-import io.github.nikromaniuk.greed_dungeon.hero_memento.HeroMementoDto;
-import io.github.nikromaniuk.greed_dungeon.hero_memento.HeroMementoEntity;
+import io.github.nikromaniuk.greed_dungeon.floor.mappers.FloorPersistenceMapper;
+import io.github.nikromaniuk.greed_dungeon.hero.dto.HeroCreateDto;
+import io.github.nikromaniuk.greed_dungeon.hero.dto.HeroResponseDto;
+import io.github.nikromaniuk.greed_dungeon.hero.dto.HeroVerbalDto;
+import io.github.nikromaniuk.greed_dungeon.hero.mappers.HeroPersistenceMapper;
+import io.github.nikromaniuk.greed_dungeon.hero.mappers.HeroWebMapper;
+import io.github.nikromaniuk.greed_dungeon.hero_memento.HeroMemento;
+import io.github.nikromaniuk.greed_dungeon.hero_memento.dto.HeroMementoCreateDto;
+import io.github.nikromaniuk.greed_dungeon.hero_memento.mappers.HeroMementoWebMapper;
+import io.github.nikromaniuk.greed_dungeon.memento.Memento;
 import io.github.nikromaniuk.greed_dungeon.memento.MementoEntity;
 import io.github.nikromaniuk.greed_dungeon.memento.MementoRepository;
+import io.github.nikromaniuk.greed_dungeon.memento.mappers.MementoPersistenceMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class HeroService
@@ -16,65 +27,96 @@ public class HeroService
     private final HeroRepository heroRepository;
     private final FloorRepository floorRepository;
     private final MementoRepository mementoRepository;
+    private final HeroWebMapper heroWebMapper;
+    private final HeroPersistenceMapper heroPersistenceMapper;
+    private final HeroMementoWebMapper heroMementoWebMapper;
+    private final FloorPersistenceMapper floorPersistenceMapper;
+    private final MementoPersistenceMapper mementoPersistenceMapper;
 
-    public HeroService( HeroRepository heroRepository,
-                        FloorRepository floorRepository,
-                        MementoRepository mementoRepository)
+    public HeroService(
+            HeroRepository heroRepository,
+            FloorRepository floorRepository,
+            MementoRepository mementoRepository,
+            HeroWebMapper heroWebMapper,
+            HeroPersistenceMapper heroPersistenceMapper,
+            HeroMementoWebMapper heroMementoWebMapper,
+            FloorPersistenceMapper floorPersistenceMapper,
+            MementoPersistenceMapper mementoPersistenceMapper)
     {
         this.heroRepository = heroRepository;
         this.floorRepository = floorRepository;
         this.mementoRepository = mementoRepository;
+        this.heroWebMapper = heroWebMapper;
+        this.heroPersistenceMapper = heroPersistenceMapper;
+        this.heroMementoWebMapper = heroMementoWebMapper;
+        this.floorPersistenceMapper = floorPersistenceMapper;
+        this.mementoPersistenceMapper = mementoPersistenceMapper;
     }
 
     public List<HeroResponseDto> getAllHeroes()
     {
         List<HeroEntity> entities = heroRepository.findAll();
-        List<HeroResponseDto> responses = new ArrayList<>();
 
-        for( HeroEntity entity : entities )
-        {
-            responses.add(HeroResponseDto.fromEntity(entity));
-        }
+        List<Hero> domains = entities.stream()
+                .map(heroPersistenceMapper::toDomain)
+                .toList();
 
-        return responses;
+        return domains.stream()
+                .map(heroWebMapper::toResponse)
+                .toList();
     }
 
-    public void createHero(CreateHeroDto request)
+    public List<HeroVerbalDto> getAllHeroesVerbal()
     {
-        if (request == null) { return; }
+        List<HeroEntity> entities = heroRepository.findAll();
 
-        // --- Create Empty Hero ---
+        List<Hero> domains = entities.stream()
+                .map(heroPersistenceMapper::toDomain)
+                .toList();
 
-        HeroEntity tempHero = new HeroEntity();
-        HeroEntity savedHero = heroRepository.save(tempHero); // Save & store new hero into the DB
+        return domains.stream()
+                .map(heroWebMapper::toVerbal)
+                .toList();
+    }
 
-        // --- Add Requested Floor ---
+    public void createHero(HeroCreateDto dto)
+    {
+        if (dto == null) { return; }
 
-        FloorEntity foundFloor = floorRepository.findById(request.floorId())
+        // --- Resolve Requested Floor (Entity -> Domain) ---
+
+        FloorEntity foundFloor = floorRepository.findById(dto.floorId())
                 .orElseThrow(() -> new RuntimeException("Requested Floor not found"));
 
-        savedHero.setFloor(foundFloor);
+        Floor floor = floorPersistenceMapper.toDomain(foundFloor);
 
-        // --- Add Requested Mementos Records ---
+        // --- Resolve Requested Mementos (Entity -> Domain) & Build HeroMementos ---
 
-        if (!request.mementos().isEmpty())
+        List<HeroMemento> mementos = new ArrayList<>();
+
+        if (dto.mementos() != null)
         {
-            for (HeroMementoDto requestedMemento : request.mementos())
+            for (HeroMementoCreateDto requestedMemento : dto.mementos())
             {
                 MementoEntity foundMemento = mementoRepository.findById(requestedMemento.mementoId())
                         .orElseThrow(() -> new RuntimeException("Requested Memento not found"));
 
-                HeroMementoEntity heroMemento = new HeroMementoEntity();
-                heroMemento.setHero(savedHero);
-                heroMemento.setMemento(foundMemento);
-                heroMemento.setLevel(requestedMemento.level());
+                Memento memento = mementoPersistenceMapper.toDomain(foundMemento);
 
-                savedHero.addMemento(heroMemento);
+                mementos.add(heroMementoWebMapper.toDomain(requestedMemento, memento));
             }
         }
 
-        // --- Save Detailed Hero ---
+        // DTO (with resolved references) -> Domain
+        Hero domain = heroWebMapper.toDomain(dto, floor, mementos);
 
-        heroRepository.save(savedHero);
+        // Domain -> Entity
+        HeroEntity entity = heroPersistenceMapper.toEntity(domain);
+
+        // Re-link back references required by the @OneToMany(mappedBy = "hero") mapping
+        entity.getMementos().forEach(heroMementoEntity -> heroMementoEntity.setHero(entity));
+
+        // Save Entity
+        heroRepository.save(entity);
     }
 }
