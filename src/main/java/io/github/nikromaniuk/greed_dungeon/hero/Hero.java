@@ -1,9 +1,8 @@
 package io.github.nikromaniuk.greed_dungeon.hero;
 
-import io.github.nikromaniuk.greed_dungeon.floor.FloorEntity;
-import io.github.nikromaniuk.greed_dungeon.hero_memento.HeroMementoEntity;
+import io.github.nikromaniuk.greed_dungeon.floor.Floor;
+import io.github.nikromaniuk.greed_dungeon.hero_memento.HeroMemento;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Hero
@@ -11,10 +10,12 @@ public class Hero
     // --- FIELDS ---
 
     private int id;
-    private FloorEntity floor;
-    private List<HeroMementoEntity> mementos;
+    private Floor floor;
+    private List<HeroMemento> mementos;
 
-    public Hero(int id, FloorEntity floor, List<HeroMementoEntity> mementos)
+    // --- CONSTRUCTORS ---
+
+    public Hero(int id, Floor floor, List<HeroMemento> mementos)
     {
         this.id = id;
         this.floor = floor;

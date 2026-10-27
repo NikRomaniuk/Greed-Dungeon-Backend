@@ -11,26 +11,24 @@ import java.util.*;
 
 @Entity
 @Table(name = "heroes")
+@Getter @Setter
 public class HeroEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment
-    @Getter @Setter
     private int id;
 
     // Many heroes can be on the same dungeon floor
     @ManyToOne
     @JoinColumn(name = "floor_id")
-    @Getter @Setter
     private FloorEntity floor;
 
     // One hero can have many mementos
     @OneToMany(mappedBy = "hero", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    @Setter
     private List<HeroMementoEntity> mementos = new ArrayList<>();
 
-    public List<HeroMementoEntity> getMementos()        { return new ArrayList<>(mementos); }
-    public void addMemento(HeroMementoEntity memento)   { mementos.add(memento); }
+    public List<HeroMementoEntity> getMementos()        { return Collections.unmodifiableList(mementos); }
+    public void addMemento(HeroMementoEntity memento)   { memento.setHero(this); mementos.add(memento); }
     public void removeMemento(int index)                { mementos.remove(index); }
 }

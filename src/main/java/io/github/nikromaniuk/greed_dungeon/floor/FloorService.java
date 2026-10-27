@@ -1,5 +1,7 @@
 package io.github.nikromaniuk.greed_dungeon.floor;
 
+import io.github.nikromaniuk.greed_dungeon.floor.dto.*;
+import io.github.nikromaniuk.greed_dungeon.floor.mappers.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,33 +10,43 @@ import java.util.List;
 public class FloorService
 {
     private final FloorRepository floorRepository;
+    private final FloorWebMapper floorWebMapper;
+    private final FloorPersistenceMapper floorPersistenceMapper;
 
-    public FloorService(FloorRepository floorRepository)
+    public FloorService(
+            FloorRepository floorRepository,
+            FloorWebMapper floorWebMapper,
+            FloorPersistenceMapper floorPersistenceMapper)
     {
         this.floorRepository = floorRepository;
+        this.floorWebMapper = floorWebMapper;
+        this.floorPersistenceMapper = floorPersistenceMapper;
     }
 
-    public List<FloorEntity> getAllFloors()
+    public List<FloorResponseDto> getAllFloors()
     {
-        return floorRepository.findAll();
+        List<FloorEntity> entities = floorRepository.findAll();
+
+        List<Floor> domains = entities.stream()
+                .map(floorPersistenceMapper::toDomain)
+                .toList();
+
+        return domains.stream()
+                .map(floorWebMapper::toResponse)
+                .toList();
     }
 
-    public void createFloor(CreateFloorRequest request)
+    public void createFloor(FloorCreateDto dto)
     {
-        if (request == null) { return; }
+        if (dto == null) { return; }
 
-        // --- Create Empty Object ---
+        // DTO -> Domain
+        Floor domain = floorWebMapper.toDomain(dto);
 
-        FloorEntity tempFloor = new FloorEntity();
-        FloorEntity savedFloor = floorRepository.save(tempFloor); // Save & store new floor into the DB
+        // Domain -> Entity
+        FloorEntity entity = floorPersistenceMapper.toEntity(domain);
 
-        // --- Add Details To Object ---
-
-        savedFloor.setDepth(request.depth());
-        savedFloor.setName(request.name());
-
-        // --- Save Detailed Object ---
-
-        floorRepository.save(savedFloor);
+        // Save Entity
+        floorRepository.save(entity);
     }
 }

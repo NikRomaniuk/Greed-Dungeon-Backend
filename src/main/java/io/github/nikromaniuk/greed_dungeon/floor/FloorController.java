@@ -1,5 +1,6 @@
 package io.github.nikromaniuk.greed_dungeon.floor;
 
+import io.github.nikromaniuk.greed_dungeon.floor.dto.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -16,13 +17,13 @@ public class FloorController
     }
 
     @GetMapping
-    public List<FloorEntity> getAllFloors()
+    public List<FloorResponseDto> getAllFloors()
     {
         return service.getAllFloors();
     }
 
     @PostMapping
-    public void createFloor(@RequestBody CreateFloorRequest request)
+    public void createFloor(@RequestBody FloorCreateDto request)
     {
         service.createFloor(request);
     }
