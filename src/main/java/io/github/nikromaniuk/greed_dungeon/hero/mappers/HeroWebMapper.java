@@ -17,6 +17,7 @@ import java.util.List;
 public interface HeroWebMapper
 {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "mementos", source = "mementos")
     Hero toDomain(HeroCreateDto createDto, Floor floor, List<HeroMemento> mementos);
 
     @Mapping(target = "floorId", source = "floor.id")

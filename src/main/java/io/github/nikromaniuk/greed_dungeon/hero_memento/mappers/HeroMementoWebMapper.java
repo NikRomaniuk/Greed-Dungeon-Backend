@@ -15,6 +15,7 @@ public interface HeroMementoWebMapper
     @Mapping(target = "hero", ignore = true)
     HeroMemento toDomain(HeroMementoCreateDto createDto, Memento memento);
 
+    @Mapping(target = "id", source = "memento.id")
     HeroMementoResponseDto toResponse(HeroMemento domain);
 
     @Mapping(target = "name", source = "memento.name")
