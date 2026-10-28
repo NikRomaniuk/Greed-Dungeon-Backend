@@ -1,7 +1,9 @@
 package io.github.nikromaniuk.greed_dungeon.floor;
 
-import io.github.nikromaniuk.greed_dungeon.floor.dto.*;
-import io.github.nikromaniuk.greed_dungeon.floor.mappers.*;
+import io.github.nikromaniuk.greed_dungeon.floor.dto.FloorCreateDto;
+import io.github.nikromaniuk.greed_dungeon.floor.dto.FloorResponseDto;
+import io.github.nikromaniuk.greed_dungeon.floor.mappers.FloorPersistenceMapper;
+import io.github.nikromaniuk.greed_dungeon.floor.mappers.FloorWebMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +50,13 @@ public class FloorService
 
         // Save Entity
         floorRepository.save(entity);
+    }
+
+    public Floor getDomainFloor(int floorId)
+    {
+        FloorEntity foundFloor = floorRepository.findById(floorId)
+                .orElseThrow(() -> new RuntimeException("Requested Floor not found"));
+
+        return floorPersistenceMapper.toDomain(foundFloor);
     }
 }

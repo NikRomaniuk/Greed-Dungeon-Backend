@@ -1,7 +1,9 @@
 package io.github.nikromaniuk.greed_dungeon.memento;
 
-import io.github.nikromaniuk.greed_dungeon.memento.dto.*;
-import io.github.nikromaniuk.greed_dungeon.memento.mappers.*;
+import io.github.nikromaniuk.greed_dungeon.memento.dto.MementoCreateDto;
+import io.github.nikromaniuk.greed_dungeon.memento.dto.MementoResponseDto;
+import io.github.nikromaniuk.greed_dungeon.memento.mappers.MementoPersistenceMapper;
+import io.github.nikromaniuk.greed_dungeon.memento.mappers.MementoWebMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +50,13 @@ public class MementoService
 
         // Save Entity
         mementoRepository.save(entity);
+    }
+
+    public Memento getDomainMemento(int mementoId)
+    {
+        MementoEntity foundMemento = mementoRepository.findById(mementoId)
+                .orElseThrow(() -> new RuntimeException("Requested Floor not found"));
+
+        return mementoPersistenceMapper.toDomain(foundMemento);
     }
 }

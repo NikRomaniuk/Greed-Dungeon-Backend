@@ -1,9 +1,7 @@
 package io.github.nikromaniuk.greed_dungeon.hero;
 
 import io.github.nikromaniuk.greed_dungeon.floor.Floor;
-import io.github.nikromaniuk.greed_dungeon.floor.FloorEntity;
-import io.github.nikromaniuk.greed_dungeon.floor.FloorRepository;
-import io.github.nikromaniuk.greed_dungeon.floor.mappers.FloorPersistenceMapper;
+import io.github.nikromaniuk.greed_dungeon.floor.FloorService;
 import io.github.nikromaniuk.greed_dungeon.hero.dto.HeroCreateDto;
 import io.github.nikromaniuk.greed_dungeon.hero.dto.HeroResponseDto;
 import io.github.nikromaniuk.greed_dungeon.hero.dto.HeroVerbalDto;
@@ -13,9 +11,7 @@ import io.github.nikromaniuk.greed_dungeon.hero_memento.HeroMemento;
 import io.github.nikromaniuk.greed_dungeon.hero_memento.dto.HeroMementoCreateDto;
 import io.github.nikromaniuk.greed_dungeon.hero_memento.mappers.HeroMementoWebMapper;
 import io.github.nikromaniuk.greed_dungeon.memento.Memento;
-import io.github.nikromaniuk.greed_dungeon.memento.MementoEntity;
-import io.github.nikromaniuk.greed_dungeon.memento.MementoRepository;
-import io.github.nikromaniuk.greed_dungeon.memento.mappers.MementoPersistenceMapper;
+import io.github.nikromaniuk.greed_dungeon.memento.MementoService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,32 +21,26 @@ import java.util.List;
 public class HeroService
 {
     private final HeroRepository heroRepository;
-    private final FloorRepository floorRepository;
-    private final MementoRepository mementoRepository;
     private final HeroWebMapper heroWebMapper;
     private final HeroPersistenceMapper heroPersistenceMapper;
     private final HeroMementoWebMapper heroMementoWebMapper;
-    private final FloorPersistenceMapper floorPersistenceMapper;
-    private final MementoPersistenceMapper mementoPersistenceMapper;
+    private final FloorService floorService;
+    private final MementoService mementoService;
 
     public HeroService(
             HeroRepository heroRepository,
-            FloorRepository floorRepository,
-            MementoRepository mementoRepository,
             HeroWebMapper heroWebMapper,
             HeroPersistenceMapper heroPersistenceMapper,
             HeroMementoWebMapper heroMementoWebMapper,
-            FloorPersistenceMapper floorPersistenceMapper,
-            MementoPersistenceMapper mementoPersistenceMapper)
+            FloorService floorService,
+            MementoService mementoService)
     {
         this.heroRepository = heroRepository;
-        this.floorRepository = floorRepository;
-        this.mementoRepository = mementoRepository;
         this.heroWebMapper = heroWebMapper;
         this.heroPersistenceMapper = heroPersistenceMapper;
         this.heroMementoWebMapper = heroMementoWebMapper;
-        this.floorPersistenceMapper = floorPersistenceMapper;
-        this.mementoPersistenceMapper = mementoPersistenceMapper;
+        this.floorService = floorService;
+        this.mementoService = mementoService;
     }
 
     public List<HeroResponseDto> getAllHeroes()
@@ -83,14 +73,11 @@ public class HeroService
     {
         if (dto == null) { return; }
 
-        // --- Resolve Requested Floor (Entity -> Domain) ---
+        // --- Resolve Requested Floor ---
 
-        FloorEntity foundFloor = floorRepository.findById(dto.floorId())
-                .orElseThrow(() -> new RuntimeException("Requested Floor not found"));
+        Floor floor = floorService.getDomainFloor(dto.floorId());
 
-        Floor floor = floorPersistenceMapper.toDomain(foundFloor);
-
-        // --- Resolve Requested Mementos (Entity -> Domain) & Build HeroMementos ---
+        // --- Resolve Requested Mementos & Build HeroMementos ---
 
         List<HeroMemento> mementos = new ArrayList<>();
 
@@ -98,10 +85,7 @@ public class HeroService
         {
             for (HeroMementoCreateDto requestedMemento : dto.mementos())
             {
-                MementoEntity foundMemento = mementoRepository.findById(requestedMemento.mementoId())
-                        .orElseThrow(() -> new RuntimeException("Requested Memento not found"));
-
-                Memento memento = mementoPersistenceMapper.toDomain(foundMemento);
+                Memento memento = mementoService.getDomainMemento(requestedMemento.mementoId());
 
                 mementos.add(heroMementoWebMapper.toDomain(requestedMemento, memento));
             }

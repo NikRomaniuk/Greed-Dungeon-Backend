@@ -17,7 +17,7 @@ public interface HeroMementoWebMapper
 
     HeroMementoResponseDto toResponse(HeroMemento domain);
 
-    @Mapping(source = "memento.name", target = "name")
-    @Mapping(source = "level", target = "level")
+    @Mapping(target = "name", source = "memento.name")
+    @Mapping(target = "level", source = "level")
     HeroMementoVerbalDto toVerbal(HeroMemento domain);
 }
