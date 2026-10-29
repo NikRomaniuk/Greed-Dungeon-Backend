@@ -12,15 +12,15 @@ public class HeroMemento
     private int id;
     private Hero hero;
     private Memento memento;
-    private int level;
+    private int mementoLevel;
 
     // --- Constructors ---
 
-    public HeroMemento(int id, Hero hero, Memento memento, int level)
+    public HeroMemento(int id, Hero hero, Memento memento, int mementoLevel)
     {
         this.id = id;
         this.hero = hero;
         this.memento = memento;
-        this.level = level;
+        this.mementoLevel = mementoLevel;
     }
 }

@@ -23,6 +23,6 @@ public interface HeroWebMapper
     @Mapping(target = "floorId", source = "floor.id")
     HeroResponseDto toResponse(Hero domain);
 
-    @Mapping(target = "floor", source = "floor.name")
+    @Mapping(target = "floorName", source = "floor.name")
     HeroVerbalDto toVerbal(Hero domain);
 }

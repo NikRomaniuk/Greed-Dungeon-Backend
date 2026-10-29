@@ -29,5 +29,5 @@ public class HeroMementoEntity
     private MementoEntity memento;
 
     @Getter @Setter
-    private int level;
+    private int mementoLevel;
 }
