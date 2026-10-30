@@ -1,0 +1,29 @@
+# --- Build Output ---
+target/
+
+# --- Local Secrets ---
+.env
+.env.local
+
+# --- VCS and IDE Metadata ---
+.git/
+.gitignore
+.gitattributes
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.settings/
+.classpath
+.project
+.factorypath
+.springBeans
+.sts4-cache
+
+# --- Docs ---
+README.md
+LICENSE
+HELP.md
+Dockerfile
+.dockerignore
