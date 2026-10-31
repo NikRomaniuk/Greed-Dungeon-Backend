@@ -3,6 +3,7 @@ package io.github.nikromaniuk.greed_dungeon.configs;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,6 +13,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -28,9 +31,13 @@ public class SecurityConfig
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF
                 .authorizeHttpRequests( // Authorize access to endpoints
                         auth -> auth
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated()
-                );
+                                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
+                                .anyRequest().authenticated()
+                )
+                .httpBasic(withDefaults());
 
         return http.build();
     }

@@ -20,12 +20,16 @@ services:
       start_period: 20s
 
   app:
-    image: springboot-mysql-app
+    image: greed-dungeon-backend
     build:
       context: .
     ports:
       - "8080:8080"
     environment:
+      SPRING_SECURITY_USER_NAME: ${SPRING_SECURITY_USER_NAME:-greed_dungeon_dev}
+      SPRING_SECURITY_USER_PASSWORD: ${SPRING_SECURITY_USER_PASSWORD:?set SPRING_SECURITY_USER_PASSWORD in.env}
+      SPRING_SECURITY_USER_ROLES: ${SPRING_SECURITY_USER_ROLES:-DEV}
+
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE:-greed_dungeon_db}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-greed_dungeon_dev}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env}
