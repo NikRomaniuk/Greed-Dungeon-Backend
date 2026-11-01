@@ -19,7 +19,7 @@ services:
       retries: 10
       start_period: 20s
 
-  app:
+  backend:
     image: greed-dungeon-backend
     build:
       context: .
@@ -36,6 +36,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  frontend:
+    image: greed-dungeon-frontend
+    build:
+      context: ${FRONTEND_DIR:?set FRONTEND_DIR in .env}
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
 
 volumes:
   db_data:
