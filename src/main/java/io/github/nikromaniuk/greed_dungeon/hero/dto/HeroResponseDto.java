@@ -5,8 +5,8 @@ import io.github.nikromaniuk.greed_dungeon.hero_memento.dto.HeroMementoResponseD
 import java.util.List;
 
 public record HeroResponseDto(
-        int id,
-        int floorId,
+        Long id,
+        Long floorId,
         List<HeroMementoResponseDto> mementos)
 {
 

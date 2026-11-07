@@ -9,14 +9,14 @@ public class HeroMemento
 {
     // --- Fields ---
 
-    private int id;
+    private Long id;
     private Hero hero;
     private Memento memento;
     private int mementoLevel;
 
     // --- Constructors ---
 
-    public HeroMemento(int id, Hero hero, Memento memento, int mementoLevel)
+    public HeroMemento(Long id, Hero hero, Memento memento, int mementoLevel)
     {
         this.id = id;
         this.hero = hero;

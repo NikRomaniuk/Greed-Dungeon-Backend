@@ -7,13 +7,13 @@ public class Floor
 {
     // --- FIELDS ---
 
-    private int id;
+    private Long id;
     private int depth;
     private String name;
 
     // --- CONSTRUCTORS ---
 
-    public Floor(int id, int depth, String name)
+    public Floor(Long id, int depth, String name)
     {
         this.id = id;
         this.depth = depth;

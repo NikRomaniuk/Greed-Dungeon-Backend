@@ -11,13 +11,13 @@ public class Hero
 {
     // --- FIELDS ---
 
-    private int id;
+    private Long id;
     private Floor floor;
     private List<HeroMemento> mementos;
 
     // --- CONSTRUCTORS ---
 
-    public Hero(int id, Floor floor, List<HeroMemento> mementos)
+    public Hero(Long id, Floor floor, List<HeroMemento> mementos)
     {
         this.id = id;
         this.floor = floor;

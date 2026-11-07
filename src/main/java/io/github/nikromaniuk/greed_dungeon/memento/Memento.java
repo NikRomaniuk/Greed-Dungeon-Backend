@@ -7,12 +7,12 @@ public class Memento
 {
     // --- Fields ---
 
-    private int id;
+    private Long id;
     private String name;
 
     // --- Constructors ---
 
-    public Memento(int id, String name)
+    public Memento(Long id, String name)
     {
         this.id = id;
         this.name = name;

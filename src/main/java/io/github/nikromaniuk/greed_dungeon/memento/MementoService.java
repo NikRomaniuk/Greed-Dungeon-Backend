@@ -52,7 +52,7 @@ public class MementoService
         mementoRepository.save(entity);
     }
 
-    public Memento getDomainMemento(int mementoId)
+    public Memento getDomainMemento(Long mementoId)
     {
         MementoEntity foundMemento = mementoRepository.findById(mementoId)
                 .orElseThrow(() -> new RuntimeException("Requested Floor not found"));

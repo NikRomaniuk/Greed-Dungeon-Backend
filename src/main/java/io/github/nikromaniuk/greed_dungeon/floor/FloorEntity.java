@@ -6,16 +6,16 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "dungeon_floors")
+@Getter @Setter
 public class FloorEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment
-    @Getter @Setter
-    private int id;
+    private Long id;
 
-    @Getter @Setter
+    @Column(name = "depth", columnDefinition = "SMALLINT UNSIGNED")
     private int depth;
 
-    @Getter @Setter
+    @Column(name = "name")
     private String name;
 }

@@ -52,7 +52,7 @@ public class FloorService
         floorRepository.save(entity);
     }
 
-    public Floor getDomainFloor(int floorId)
+    public Floor getDomainFloor(Long floorId)
     {
         FloorEntity foundFloor = floorRepository.findById(floorId)
                 .orElseThrow(() -> new RuntimeException("Requested Floor not found"));

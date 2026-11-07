@@ -6,13 +6,13 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "mementos")
+@Getter @Setter
 public class MementoEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment
-    @Getter @Setter
-    private int id;
+    private Long id;
 
-    @Getter @Setter
+    @Column(name = "name")
     private String name;
 }

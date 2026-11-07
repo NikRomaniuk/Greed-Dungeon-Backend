@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "heroes")
@@ -16,7 +18,7 @@ public class HeroEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment
-    private int id;
+    private Long id;
 
     // Many heroes can be on the same dungeon floor
     @ManyToOne

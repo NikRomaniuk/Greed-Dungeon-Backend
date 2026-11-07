@@ -1,7 +1,7 @@
 package io.github.nikromaniuk.greed_dungeon.memento.dto;
 
 public record MementoResponseDto(
-        int id,
+        Long id,
         String name)
 {
 
