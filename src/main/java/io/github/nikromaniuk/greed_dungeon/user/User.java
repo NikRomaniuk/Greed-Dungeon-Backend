@@ -1,8 +1,9 @@
 package io.github.nikromaniuk.greed_dungeon.user;
 
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 public class User
 {
     // --- FIELDS ---
